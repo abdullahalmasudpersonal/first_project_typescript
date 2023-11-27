@@ -1,54 +1,58 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
 // Define Joi schemas for each sub-document
-const userNameValidationSchema = Joi.object({
+const userNameSchema = Joi.object({
   firstName: Joi.string()
     .required()
     .trim()
     .max(20)
-    .pattern(/^[A-Z][a-z]*$/, 'capitalize')
+    .regex(/^[A-Z][a-z]*$/, { name: 'capitalize' })
     .message('First Name must start with a capital letter'),
-  middleName: Joi.string().allow('').trim(),
-  lastName: Joi.string()
-    .required()
-    .trim()
-    .regex(/^[a-zA-Z]+$/),
-})
+  middleName: Joi.string().trim(),
+  lastName: Joi.string().required(),
+});
 
-const guardianValidationSchema = Joi.object({
-  fatherName: Joi.string().required().trim(),
-  fatherOccupation: Joi.string().required().trim(),
-  fatherContactNo: Joi.string().required().trim(),
-  motherName: Joi.string().required().trim(),
-  motherOccupation: Joi.string().required().trim(),
-  motherContactNo: Joi.string().required().trim(),
-})
+const guardianSchema = Joi.object({
+  fatherName: Joi.string().required(),
+  fatherOccupation: Joi.string().required(),
+  fatherContactNo: Joi.string().required(),
+  motherName: Joi.string().required(),
+  motherOccupation: Joi.string().required(),
+  motherContactNo: Joi.string().required(),
+});
 
-const localGuardianValidationSchema = Joi.object({
-  name: Joi.string().required().trim(),
-  occupation: Joi.string().required().trim(),
-  contactNo: Joi.string().required().trim(),
-  address: Joi.string().required().trim(),
-})
+const localGuardianSchema = Joi.object({
+  name: Joi.string().required(),
+  occupation: Joi.string().required(),
+  contactNo: Joi.string().required(),
+  address: Joi.string().required(),
+});
 
-// Define the main schema using Joi
-const studentValidationSchema = Joi.object({
-  id: Joi.string().required().trim(),
-  name: userNameValidationSchema.required(),
-  gender: Joi.string().required().trim().valid('male', 'female', 'other'),
-  dateOfBirth: Joi.string().allow('').trim(),
-  email: Joi.string().required().trim().email(),
-  contactNo: Joi.string().required().trim(),
-  emergencyContactNo: Joi.string().required().trim(),
-  bloodGroup: Joi.string()
-    .trim()
-    .valid('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'),
-  presentAddress: Joi.string().required().trim(),
-  permanentAddress: Joi.string().required().trim(),
-  guardian: guardianValidationSchema.required(),
-  localGuardian: localGuardianValidationSchema.required(),
-  profileImg: Joi.string().allow('').trim(),
-  isActive: Joi.string().trim().valid('active', 'blocked').default('active'),
-})
+export const studentValidationSchema = Joi.object({
+  id: Joi.string().required(),
+  password: Joi.string().required().max(30),
+  name: userNameSchema.required(),
+  gender: Joi.string().valid('male', 'female', 'other').required(),
+  dateOfBirth: Joi.string(),
+  email: Joi.string().email().required(),
+  contactNo: Joi.string().required(),
+  emergencyContactNo: Joi.string().required(),
+  bloogGroup: Joi.string().valid(
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'O+',
+    'O-',
+  ),
+  presentAddress: Joi.string().required(),
+  permanentAddress: Joi.string().required(),
+  guardian: guardianSchema.required(),
+  localGuardian: localGuardianSchema.required(),
+  profileImg: Joi.string(),
+  isActive: Joi.string().valid('active', 'blocked').default('active'),
+});
 
-export default studentValidationSchema
+export default studentValidationSchema;
